@@ -1,0 +1,57 @@
+version: '3.5'
+
+services:
+
+  nest_api_routes:
+    build:
+      context: ./nest-app
+      dockerfile: .docker/nest.dockerfile
+    env_file:
+      - ./nest-app/.env.example
+#      - ./nest-app/.env
+    container_name: nest_api_routes
+    hostname: nest_api_routes
+    restart: always
+    ports:
+      - 3000:3000
+    depends_on:
+      - mongo_db_routes
+    networks:
+      - database
+      - api
+
+  mongo_db_routes:
+    image: mongo
+    restart: always
+    container_name: mongo_db_routes
+    hostname: mongo_db_routes
+    volumes:
+      - ./mongo/data/db:/data/db
+      - ./mongo/entrypoint:/docker-entrypoint-initdb.d
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+      - MONGO_INITDB_DATABASE=nest
+    networks:
+      - database
+
+  react_app_routes:
+    build:
+      context: ./react-app
+      dockerfile: .docker/react.dockerfile
+    env_file:
+      - ./react-app/.env.example
+#      - ./react-app/.env
+    container_name: react_app_routes
+    restart: always
+    ports:
+      - 3001:3000
+    networks:
+      - api
+    depends_on:
+      - nest_api_routes
+
+networks:
+  database:
+    internal: true
+  api:

@@ -1,0 +1,20 @@
+POST http://localhost:3000/routes
+Content-Type: application/json
+
+{
+  "title": "Motorista 5",
+  "startPosition": {
+    "lat": 999,
+    "lng": 2
+  },
+  "endPosition": {
+    "lat": 2,
+    "lng": 412
+  }
+}
+
+###
+
+GET http://localhost:3000/routes
+
+###
